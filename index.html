@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#151a35">
+    <meta name="description" content="Bohese 的个人起始页，包含搜索、待办和常用入口。">
+    <title>StartMenu · Bohese</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="canvas" aria-hidden="true"></canvas>
+
+    <main class="page-shell">
+        <section class="search-container" aria-labelledby="searchTitle">
+            <div class="eyebrow">BOHESE / STARTMENU</div>
+            <h1 id="searchTitle">今天，想从哪里开始？</h1>
+            <p class="search-hint">按 <kbd>/</kbd> 快速聚焦搜索框</p>
+
+            <form id="searchForm" class="search-wrapper" role="search">
+                <label class="visually-hidden" for="searchEngine">搜索引擎</label>
+                <select id="searchEngine" class="search-engine-select" aria-label="选择搜索引擎">
+                    <option value="bing" selected>Bing</option>
+                    <option value="baidu">百度</option>
+                    <option value="yandex">Yandex</option>
+                    <option value="google">Google</option>
+                </select>
+                <label class="visually-hidden" for="searchInput">搜索内容</label>
+                <input type="search" id="searchInput" class="search-input" placeholder="搜索内容..."
+                    autocomplete="off" spellcheck="false">
+                <button id="searchBtn" class="search-btn" type="submit">
+                    <span aria-hidden="true">⌕</span>
+                    <span>搜索</span>
+                </button>
+            </form>
+        </section>
+
+        <section class="todo-container" aria-labelledby="appTitle">
+            <div class="container">
+                <header class="header">
+                    <div>
+                        <p class="section-kicker">今日专注</p>
+                        <h2 id="appTitle">我的待办</h2>
+                        <p class="date" id="currentDate"></p>
+                    </div>
+                    <button id="toggleTodoBtn" class="toggle-todo-btn collapsed" type="button"
+                        aria-expanded="false" aria-controls="todoContent">
+                        <span class="toggle-icon" aria-hidden="true">⌄</span>
+                        <span class="toggle-text">展开</span>
+                    </button>
+                </header>
+
+                <div id="todoContent" class="todo-panel-content collapsed">
+                    <form id="todoForm" class="input-section">
+                        <label class="visually-hidden" for="todoInput">任务内容</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="todoInput" placeholder="输入任务内容..." autocomplete="off"
+                                maxlength="200">
+                            <label class="visually-hidden" for="prioritySelect">任务优先级</label>
+                            <select id="prioritySelect" class="priority-select" aria-label="任务优先级">
+                                <option value="low">低</option>
+                                <option value="medium" selected>中</option>
+                                <option value="high">高</option>
+                            </select>
+                            <button id="addBtn" class="add-btn" type="submit">
+                                <span aria-hidden="true">+</span> 添加任务
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="filter-section" aria-label="任务筛选">
+                        <button class="filter-btn active" type="button" data-filter="all">全部任务</button>
+                        <button class="filter-btn" type="button" data-filter="active">未完成</button>
+                        <button class="filter-btn" type="button" data-filter="completed">已完成</button>
+                    </div>
+
+                    <div class="stats-section">
+                        <span id="statsText" aria-live="polite">还没有任务</span>
+                        <button id="clearCompletedBtn" class="clear-btn" type="button" hidden>清空已完成</button>
+                    </div>
+
+                    <ul id="todoList" class="todo-list" aria-live="polite"></ul>
+
+                    <div id="emptyState" class="empty-state">
+                        <div class="empty-icon" aria-hidden="true">✦</div>
+                        <p id="emptyText">还没有任务</p>
+                        <p class="empty-subtitle" id="emptySubtitle">添加第一个任务吧！</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer" aria-label="常用入口">
+            <a href="https://www.bilibili.com" target="_blank" rel="noopener noreferrer" class="footer-link bilibili-link">
+                <span class="footer-icon" aria-hidden="true">B</span><span>bilibili</span>
+            </a>
+            <a href="https://www.zhihu.com" target="_blank" rel="noopener noreferrer" class="footer-link zhihu-link">
+                <span class="footer-icon" aria-hidden="true">知</span><span>知乎</span>
+            </a>
+            <a href="https://weibo.com" target="_blank" rel="noopener noreferrer" class="footer-link weibo-link">
+                <span class="footer-icon" aria-hidden="true">微</span><span>微博</span>
+            </a>
+            <a href="orpheus://daily" class="footer-link netease-link">
+                <span class="footer-icon" aria-hidden="true">音</span><span>网易云</span>
+            </a>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="canvasStar.js"></script>
+</body>
+
+</html>
+
