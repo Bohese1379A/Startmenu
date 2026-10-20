@@ -330,6 +330,10 @@ kbd {
 .zhihu-link { background: #0084ff; }
 .weibo-link { background: #e6162d; }
 .netease-link { background: #c20c0c; }
+.bilibili-link .footer-icon { color: #c83f69; }
+.zhihu-link .footer-icon { color: #006bd1; }
+.weibo-link .footer-icon { color: #cf1429; }
+.netease-link .footer-icon { color: #b20b0b; }
 
 .notification {
     position: fixed;
