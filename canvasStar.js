@@ -206,7 +206,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function loop(timestamp) {
         animationFrame = 0;
-        if (motionPreference.matches || points.length === 0) return;
+        if (document.hidden || motionPreference.matches || points.length === 0) return;
         const step = lastFrame ? Math.min(2, (timestamp - lastFrame) / (1000 / 60)) : 1;
         lastFrame = timestamp;
         update(step);
@@ -214,15 +214,28 @@ window.addEventListener('DOMContentLoaded', () => {
         animationFrame = window.requestAnimationFrame(loop);
     }
 
+    function stopDrawing() {
+        if (animationFrame) window.cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+        lastFrame = 0;
+    }
+
     function restartDrawing() {
+        if (document.hidden) {
+            stopDrawing();
+            return;
+        }
         draw();
         if (motionPreference.matches || points.length === 0) {
-            if (animationFrame) window.cancelAnimationFrame(animationFrame);
-            animationFrame = 0;
-            lastFrame = 0;
+            stopDrawing();
         } else if (!animationFrame) {
             animationFrame = window.requestAnimationFrame(loop);
         }
+    }
+
+    function clearPointer() {
+        mouse.x = null;
+        mouse.y = null;
     }
 
     readPalette();
@@ -238,24 +251,23 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     window.addEventListener('resize', resize, { passive: true });
     window.addEventListener('pointermove', (event) => {
-        if (event.pointerType === 'touch' || (event.target instanceof Element && event.target.closest('.settings-dock'))) {
-            mouse.x = null;
-            mouse.y = null;
+        if (document.hidden || !document.hasFocus() || event.pointerType === 'touch' ||
+            (event.target instanceof Element && event.target.closest('.settings-dock'))) {
+            clearPointer();
         } else {
             mouse.x = event.clientX;
             mouse.y = event.clientY;
         }
     }, { passive: true });
-    window.addEventListener('mouseleave', () => {
-        mouse.x = null;
-        mouse.y = null;
-    }, { passive: true });
+    window.addEventListener('mouseleave', clearPointer, { passive: true });
+    window.addEventListener('blur', clearPointer);
+    document.addEventListener('visibilitychange', () => {
+        clearPointer();
+        restartDrawing();
+    });
     window.addEventListener('pagehide', () => {
-        if (animationFrame) window.cancelAnimationFrame(animationFrame);
-        animationFrame = 0;
-        lastFrame = 0;
-        mouse.x = null;
-        mouse.y = null;
+        clearPointer();
+        stopDrawing();
     });
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) restartDrawing();
