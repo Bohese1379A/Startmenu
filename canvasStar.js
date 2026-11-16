@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let palette;
     const mouse = { x: null, y: null };
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const config = { maxDistance: 145, mouseRadius: 150, speed: 0.17, maxCount: 150, maxSpeed: 3 };
+    const config = { maxDistance: 145, mouseRadius: 150, speed: 0.17, maxCount: 300, maxSpeed: 3 };
     const storageKey = 'bohese-startmenu-particles';
     const settings = { count: null, speed: 1, attraction: false };
     const random = (min, max) => Math.random() * (max - min) + min;
