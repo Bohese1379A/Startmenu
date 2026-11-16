@@ -6,12 +6,87 @@ window.addEventListener('DOMContentLoaded', () => {
     let width = 0;
     let height = 0;
     let animationFrame = 0;
+    let lastFrame = 0;
     let points = [];
     let palette;
     const mouse = { x: null, y: null };
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const config = { maxDistance: 145, mouseRadius: 150, speed: reducedMotion ? 0 : 0.22 };
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const config = { maxDistance: 145, mouseRadius: 150, speed: 0.17, maxCount: 150, maxSpeed: 3 };
+    const storageKey = 'bohese-startmenu-particles';
+    const settings = { count: null, speed: 1, attraction: false };
     const random = (min, max) => Math.random() * (max - min) + min;
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (Number.isInteger(saved?.count)) settings.count = clamp(saved.count, 0, config.maxCount);
+        if (Number.isFinite(saved?.speed)) settings.speed = clamp(saved.speed, 0, config.maxSpeed);
+        settings.attraction = saved?.attraction === true;
+    } catch {
+        // The defaults also work when storage is unavailable.
+    }
+
+    const picker = document.getElementById('particlePicker');
+    const toggle = document.getElementById('particleToggle');
+    const panel = document.getElementById('particlePanel');
+    const countInput = document.getElementById('particleCount');
+    const countValue = document.getElementById('particleCountValue');
+    const speedInput = document.getElementById('particleSpeed');
+    const speedValue = document.getElementById('particleSpeedValue');
+    const speedHint = document.getElementById('particleSpeedHint');
+    const attractionInput = document.getElementById('particleAttraction');
+
+    function saveSettings() {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(settings));
+        } catch {
+            // Changes still apply for this visit.
+        }
+    }
+
+    function showPanel(open, returnFocus = false) {
+        panel.hidden = !open;
+        toggle.setAttribute('aria-expanded', String(open));
+        if (returnFocus) toggle.focus();
+    }
+
+    function refreshControls() {
+        countInput.value = points.length;
+        countValue.value = points.length;
+        speedInput.value = settings.speed;
+        speedValue.value = settings.speed + '×';
+        speedInput.setAttribute('aria-valuetext', settings.speed + ' 倍');
+        speedHint.hidden = !motionPreference.matches;
+        attractionInput.checked = settings.attraction;
+    }
+
+    toggle.addEventListener('click', () => showPanel(panel.hidden));
+    function closeOnOutside(event) {
+        if (!panel.hidden && !picker.contains(event.target)) showPanel(false);
+    }
+    document.addEventListener('click', closeOnOutside);
+    document.addEventListener('focusin', closeOnOutside);
+    document.addEventListener('keydown', (event) => {
+        if (!panel.hidden && event.key === 'Escape') showPanel(false, true);
+    });
+    countInput.addEventListener('input', () => {
+        settings.count = countInput.valueAsNumber;
+        updateCount(settings.count);
+        refreshControls();
+        restartDrawing();
+    });
+    speedInput.addEventListener('input', () => {
+        settings.speed = speedInput.valueAsNumber;
+        refreshControls();
+        restartDrawing();
+    });
+    countInput.addEventListener('change', saveSettings);
+    speedInput.addEventListener('change', saveSettings);
+    attractionInput.addEventListener('change', () => {
+        settings.attraction = attractionInput.checked;
+        saveSettings();
+        restartDrawing();
+    });
 
     function readPalette() {
         const style = getComputedStyle(document.documentElement);
@@ -22,23 +97,58 @@ window.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        const pointCount = Math.min(115, Math.max(55, Math.floor((width * height) / 17000)));
-        points = Array.from({ length: pointCount }, () => ({
-            x: random(0, width), y: random(0, height),
-            vx: random(-config.speed, config.speed), vy: random(-config.speed, config.speed)
-        }));
+    function updateCount(count) {
+        if (points.length > count) points.length = count;
+        while (points.length < count) {
+            const angle = random(0, Math.PI * 2);
+            const speed = config.speed * random(0.55, 1.45);
+            points.push({
+                x: random(0, width), y: random(0, height),
+                vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed
+            });
+        }
     }
 
-    function update() {
-        if (reducedMotion) return;
+    function resize() {
+        const oldWidth = width;
+        const oldHeight = height;
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        if (oldWidth && oldHeight) {
+            points.forEach((point) => {
+                point.x *= width / oldWidth;
+                point.y *= height / oldHeight;
+            });
+        }
+        const autoCount = clamp(Math.floor((width * height) / 17000), 55, 115);
+        updateCount(settings.count ?? autoCount);
+        refreshControls();
+        restartDrawing();
+    }
+
+    function update(step) {
         points.forEach((point) => {
-            point.x += point.vx;
-            point.y += point.vy;
-            if (point.x < 0 || point.x > width) point.vx *= -1;
-            if (point.y < 0 || point.y > height) point.vy *= -1;
+            point.x += point.vx * settings.speed * step;
+            point.y += point.vy * settings.speed * step;
+            if (settings.attraction && mouse.x !== null) {
+                const dx = mouse.x - point.x;
+                const dy = mouse.y - point.y;
+                const distance = Math.hypot(dx, dy);
+                if (distance > 10 && distance < config.mouseRadius) {
+                    const pull = Math.min(1.8 * step, (distance - 10) * 0.14 * step);
+                    const ratio = pull * (1 - distance / config.mouseRadius) / distance;
+                    point.x += dx * ratio;
+                    point.y += dy * ratio;
+                }
+            }
+            if (point.x < 0 || point.x > width) {
+                point.x = clamp(point.x, 0, width);
+                point.vx *= -1;
+            }
+            if (point.y < 0 || point.y > height) {
+                point.y = clamp(point.y, 0, height);
+                point.vy *= -1;
+            }
         });
     }
 
@@ -94,26 +204,47 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function loop() {
-        update();
+    function loop(timestamp) {
+        animationFrame = 0;
+        if (motionPreference.matches || points.length === 0) return;
+        const step = lastFrame ? Math.min(2, (timestamp - lastFrame) / (1000 / 60)) : 1;
+        lastFrame = timestamp;
+        update(step);
         draw();
-        if (!reducedMotion) animationFrame = window.requestAnimationFrame(loop);
+        animationFrame = window.requestAnimationFrame(loop);
+    }
+
+    function restartDrawing() {
+        draw();
+        if (motionPreference.matches || points.length === 0) {
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
+            animationFrame = 0;
+            lastFrame = 0;
+        } else if (!animationFrame) {
+            animationFrame = window.requestAnimationFrame(loop);
+        }
     }
 
     readPalette();
     resize();
-    loop();
+    picker.hidden = false;
     window.addEventListener('startmenu:themechange', () => {
         readPalette();
-        if (reducedMotion) draw();
+        restartDrawing();
     });
-    window.addEventListener('resize', () => {
-        resize();
-        if (reducedMotion) draw();
-    }, { passive: true });
-    window.addEventListener('mousemove', (event) => {
-        mouse.x = event.clientX;
-        mouse.y = event.clientY;
+    motionPreference.addEventListener('change', () => {
+        refreshControls();
+        restartDrawing();
+    });
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('pointermove', (event) => {
+        if (event.pointerType === 'touch' || (event.target instanceof Element && event.target.closest('.settings-dock'))) {
+            mouse.x = null;
+            mouse.y = null;
+        } else {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+        }
     }, { passive: true });
     window.addEventListener('mouseleave', () => {
         mouse.x = null;
@@ -121,5 +252,12 @@ window.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
     window.addEventListener('pagehide', () => {
         if (animationFrame) window.cancelAnimationFrame(animationFrame);
-    }, { once: true });
+        animationFrame = 0;
+        lastFrame = 0;
+        mouse.x = null;
+        mouse.y = null;
+    });
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) restartDrawing();
+    });
 });

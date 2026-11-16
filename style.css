@@ -442,12 +442,15 @@ kbd {
 .weibo-link .footer-icon { color: #cf1429; }
 .netease-link .footer-icon { color: #b20b0b; }
 
-.theme-picker {
+.settings-dock {
     --picker-inset: clamp(12px, 2.5vw, 26px);
     position: fixed;
     z-index: 5;
     left: calc(var(--picker-inset) + env(safe-area-inset-left));
     bottom: calc(var(--picker-inset) + env(safe-area-inset-bottom));
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
 }
 
 .theme-toggle, .theme-panel {
@@ -535,6 +538,62 @@ kbd {
 .monet-color-label { display: inline-flex; align-items: center; gap: 3px; }
 .monet-color-label input { width: 22px; height: 25px; padding: 0; border: 0; background: transparent; cursor: pointer; }
 .monet-controls #monetStatus, .monet-use { margin: 8px 0 0; }
+
+.particle-icon { color: var(--primary-dark); flex: none; }
+.particle-field {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-weight: 650;
+}
+.particle-field output { color: var(--primary-dark); font-variant-numeric: tabular-nums; }
+.particle-field input[type="range"] {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 28px;
+    margin: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+.particle-field small { grid-column: 1 / -1; }
+.particle-field small, .particle-attraction small { color: var(--muted); font-size: 0.76rem; font-weight: 400; }
+.particle-attraction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+.particle-attraction small { display: block; margin-top: 4px; }
+.particle-attraction input {
+    appearance: none;
+    display: flex;
+    flex: 0 0 42px;
+    align-items: center;
+    width: 42px;
+    height: 24px;
+    margin: 0;
+    padding: 2px;
+    border: 1px solid var(--muted);
+    border-radius: 999px;
+    background: var(--surface-soft);
+    color: var(--muted);
+    cursor: pointer;
+}
+.particle-attraction input::before { content: ''; width: 16px; height: 16px; border-radius: 50%; background: currentColor; }
+.particle-attraction input:checked { justify-content: flex-end; border-color: var(--primary); background: var(--primary); color: var(--on-primary); }
+@media (forced-colors: active) {
+    .particle-attraction input { appearance: auto; flex: 0 0 auto; width: auto; height: auto; }
+    .particle-attraction input::before { content: none; }
+}
 
 .notification {
     position: fixed;

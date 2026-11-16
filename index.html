@@ -8,7 +8,7 @@
     <meta name="description" content="Bohese 的个人起始页，包含搜索、待办和常用入口。">
     <title>StartMenu · Bohese</title>
     <script src="theme.js?v=20261116b"></script>
-    <link rel="stylesheet" href="style.css?v=20261116b">
+    <link rel="stylesheet" href="style.css?v=particles1">
 </head>
 
 <body>
@@ -109,7 +109,8 @@
         </footer>
     </main>
 
-    <div class="theme-picker" id="themePicker" hidden>
+    <div class="settings-dock">
+    <div id="themePicker" hidden>
         <button class="theme-toggle" id="themeToggle" type="button" aria-expanded="false" aria-controls="themePanel">
             <span class="theme-dot" aria-hidden="true"></span>
             <span>主题</span>
@@ -150,8 +151,39 @@
         </section>
     </div>
 
+    <div id="particlePicker" hidden>
+        <button class="theme-toggle" id="particleToggle" type="button" aria-expanded="false" aria-controls="particlePanel">
+            <svg class="particle-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3 5l9-2-4 10z" fill="none" stroke="currentColor"></path>
+                <g fill="currentColor"><circle cx="3" cy="5" r="2"></circle><circle cx="12" cy="3" r="2"></circle><circle cx="8" cy="13" r="2"></circle></g>
+            </svg>
+            <span>粒子</span>
+            <span class="theme-chevron" aria-hidden="true"></span>
+        </button>
+        <section class="theme-panel" id="particlePanel" aria-labelledby="particleTitle" hidden>
+            <h2 id="particleTitle">粒子设置</h2>
+            <p>拖动滑块，实时调整背景</p>
+            <div class="particle-field">
+                <label for="particleCount">粒子数量</label>
+                <output id="particleCountValue" for="particleCount" aria-live="off"></output>
+                <input id="particleCount" type="range" min="0" max="150" step="1" value="55">
+            </div>
+            <div class="particle-field">
+                <label for="particleSpeed">平均速度</label>
+                <output id="particleSpeedValue" for="particleSpeed" aria-live="off">1×</output>
+                <input id="particleSpeed" type="range" min="0" max="3" step="0.1" value="1" aria-describedby="particleSpeedHint">
+                <small id="particleSpeedHint" hidden>系统已开启减少动态效果，粒子保持静止。</small>
+            </div>
+            <label class="particle-attraction" for="particleAttraction">
+                <span>鼠标吸附<small>让附近粒子向光标靠拢</small></span>
+                <input id="particleAttraction" type="checkbox" role="switch">
+            </label>
+        </section>
+    </div>
+    </div>
+
     <script src="script.js"></script>
-    <script src="canvasStar.js?v=20261116"></script>
+    <script src="canvasStar.js?v=particles1"></script>
 </body>
 
 </html>
