@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#151a35">
+    <meta name="theme-color" content="#101426">
     <meta name="description" content="Bohese 的个人起始页，包含搜索、待办和常用入口。">
     <title>StartMenu · Bohese</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="theme.js?v=20261116b"></script>
+    <link rel="stylesheet" href="style.css?v=20261116b">
 </head>
 
 <body>
@@ -108,9 +109,49 @@
         </footer>
     </main>
 
+    <div class="theme-picker" id="themePicker" hidden>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-expanded="false" aria-controls="themePanel">
+            <span class="theme-dot" aria-hidden="true"></span>
+            <span>主题</span>
+            <span class="theme-chevron" aria-hidden="true"></span>
+        </button>
+        <section class="theme-panel" id="themePanel" aria-labelledby="themeTitle" hidden>
+            <h2 id="themeTitle">主题配色</h2>
+            <p>选择起始页的外观</p>
+            <div class="theme-options" role="group" aria-label="可选主题">
+                <button class="theme-option" type="button" data-theme-choice="light" aria-pressed="false">
+                    <span class="theme-swatch" data-palette="light" aria-hidden="true"></span><span>极简浅色</span>
+                </button>
+                <button class="theme-option" type="button" data-theme-choice="dark" aria-pressed="false">
+                    <span class="theme-swatch" data-palette="dark" aria-hidden="true"></span><span>石墨深色</span>
+                </button>
+                <button class="theme-option" type="button" data-theme-choice="blue" aria-pressed="false">
+                    <span class="theme-swatch" data-palette="blue" aria-hidden="true"></span><span>科技蓝</span>
+                </button>
+                <button class="theme-option" type="button" data-theme-choice="violet" aria-pressed="true">
+                    <span class="theme-swatch" data-palette="violet" aria-hidden="true"></span><span>柔和紫</span>
+                </button>
+                <button class="theme-option theme-option-monet" id="monetToggle" type="button"
+                    aria-expanded="false" aria-controls="monetControls">
+                    <span class="theme-swatch" data-palette="monet" aria-hidden="true"></span><span>莫奈取色</span>
+                </button>
+            </div>
+            <div class="monet-controls" id="monetControls" hidden>
+                <p>从桌面强调色或壁纸生成配色。</p>
+                <div class="monet-actions">
+                    <button id="sampleDesktop" type="button" hidden>屏幕吸色</button>
+                    <button id="selectWallpaper" type="button">选择壁纸</button>
+                    <input id="wallpaperFile" type="file" accept="image/*" hidden>
+                    <label class="monet-color-label">手选 <input id="monetColor" type="color" value="#5879b9" aria-label="手动选择主题颜色"></label>
+                </div>
+                <p id="monetStatus" role="status" hidden></p>
+                <button class="monet-use" id="useMonet" type="button" hidden>应用上次取色</button>
+            </div>
+        </section>
+    </div>
+
     <script src="script.js"></script>
-    <script src="canvasStar.js"></script>
+    <script src="canvasStar.js?v=20261116"></script>
 </body>
 
 </html>
-
