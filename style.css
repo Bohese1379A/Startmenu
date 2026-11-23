@@ -1,3 +1,4 @@
+/* 共享颜色和各主题的 CSS 变量，下面的组件用 var() 读取。 */
 :root {
     color-scheme: light;
     --radius-lg: 26px;
@@ -127,6 +128,7 @@ html {
     background: var(--bg-deep);
 }
 
+/* 全页的留白、字体和渐变背景。 */
 body {
     min-height: 100svh;
     margin: 0;
@@ -148,6 +150,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     outline-offset: 3px;
 }
 
+/* 粒子画布铺满窗口，pointer-events: none 让它不接收点击。 */
 #canvas {
     position: fixed;
     inset: 0;
@@ -158,6 +161,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     opacity: 0.72;
 }
 
+/* 主体和搜索卡片的宽度、留白与标题样式。 */
 .page-shell {
     position: relative;
     z-index: 1;
@@ -230,6 +234,7 @@ kbd {
     font-weight: 700;
 }
 
+/* 搜索和添加任务共用的表单布局、输入框与提交按钮。 */
 .search-wrapper, .input-wrapper {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -275,6 +280,7 @@ kbd {
 .search-btn:hover, .add-btn:hover { filter: saturate(1.12) brightness(1.04); transform: translateY(-2px); }
 .search-btn:active, .add-btn:active { transform: translateY(0); }
 
+/* 待办面板、展开状态、筛选、任务条目和空列表提示。 */
 .todo-container { margin-top: 18px; animation: rise-in 0.55s 0.08s ease-out both; }
 
 .container { padding: clamp(21px, 4vw, 30px); border-radius: var(--radius-lg); }
@@ -414,6 +420,7 @@ kbd {
 .empty-state p { margin: 0 0 6px; font-size: 1rem; }
 .empty-subtitle { opacity: 0.75; font-size: 0.86rem !important; }
 
+/* 页脚用 Flex 布局排列入口，.footer-link 定义共用外观。 */
 .footer { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 18px; animation: rise-in 0.55s 0.16s ease-out both; }
 
 .footer-link {
@@ -437,11 +444,14 @@ kbd {
 .zhihu-link { background: #0084ff; }
 .weibo-link { background: #e6162d; }
 .netease-link { background: #c20c0c; }
+.mdn-link { background: #3f474f; }
 .bilibili-link .footer-icon { color: #c83f69; }
 .zhihu-link .footer-icon { color: #006bd1; }
 .weibo-link .footer-icon { color: #cf1429; }
 .netease-link .footer-icon { color: #b20b0b; }
+.mdn-link .footer-icon { color: #3f474f; }
 
+/* 页面底部的设置区，以及主题和粒子面板共用的外观。 */
 .settings-dock {
     --picker-inset: clamp(12px, 2.5vw, 26px);
     position: fixed;
@@ -520,6 +530,7 @@ kbd {
 }
 .theme-swatch[data-palette="monet"] { background: linear-gradient(90deg, var(--bg-deep) 33%, var(--seed) 33% 66%, var(--primary) 66%); }
 
+/* 莫奈取色的按钮、颜色输入框和状态提示。 */
 .monet-controls { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 .monet-controls p { margin: 0 0 8px; }
 .monet-actions { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -539,6 +550,7 @@ kbd {
 .monet-color-label input { width: 22px; height: 25px; padding: 0; border: 0; background: transparent; cursor: pointer; }
 .monet-controls #monetStatus, .monet-use { margin: 8px 0 0; }
 
+/* 粒子设置的图标、滑块、读数和开关。 */
 .particle-icon { color: var(--primary-dark); flex: none; }
 .particle-field {
     display: grid;
@@ -595,6 +607,7 @@ kbd {
     .particle-attraction input::before { content: none; }
 }
 
+/* 添加任务等操作完成后，右上角临时出现的提示。 */
 .notification {
     position: fixed;
     top: 20px;
@@ -614,6 +627,7 @@ kbd {
 .notification-info { background: var(--primary); color: var(--on-primary); }
 .notification.is-leaving { animation: notification-out 0.22s ease-in both; }
 
+/* 在视觉上隐藏标签文字，同时保留给屏幕阅读器读取。 */
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -626,11 +640,13 @@ kbd {
     border: 0;
 }
 
+/* 定义卡片进场和提示消息进出时的动画。 */
 @keyframes rise-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes notification-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes notification-out { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(18px); } }
 
+/* 视口宽度不超过 620px 时，把表单改为适合窄屏的两行布局。 */
 @media (max-width: 620px) {
     body { padding-right: 12px; padding-left: 12px; }
     .search-wrapper, .input-wrapper { grid-template-columns: 1fr 1fr; }
@@ -644,6 +660,7 @@ kbd {
     .delete-btn { opacity: 0.8; }
 }
 
+/* 用户开启减少动态效果时，缩短动画和过渡时间。 */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         scroll-behavior: auto !important;

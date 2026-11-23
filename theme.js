@@ -1,3 +1,4 @@
+// 管理主题切换、壁纸取色和配色记忆。
 (() => {
     const root = document.documentElement;
     const storageKey = 'bohese-startmenu-theme';
@@ -10,12 +11,14 @@
     const mix = (color, base, weight) => color.map((channel, index) => Math.round(channel * weight + base[index] * (1 - weight)));
     let seed = null;
 
+    // 把取到的颜色写入 CSS 变量，作为莫奈主题的配色基础。
     function setSeed(color) {
         seed = color.toLowerCase();
         root.style.setProperty('--monet-seed', seed);
         root.style.setProperty('--monet-star', mix(rgbOf(seed), [68, 84, 107], 0.48).join(', '));
     }
 
+    // 脚本放在页面头部，在渲染主体之前恢复上次使用的配色。
     try {
         const savedSeed = localStorage.getItem(seedKey);
         if (validSeed(savedSeed)) setSeed(savedSeed);
@@ -25,6 +28,7 @@
         root.dataset.theme = defaultTheme;
     }
 
+    // 缩小壁纸并读取像素，从经常出现的颜色里挑选一个代表色。
     async function extractWallpaperColor(file) {
         if (file.size > 25 * 1024 * 1024) throw new Error('图片不能超过 25 MB');
         const image = await createImageBitmap(file, { resizeWidth: 72, resizeHeight: 72 });
@@ -60,6 +64,7 @@
         }
     }
 
+    // 等 HTML 解析完成后，再绑定主题面板里的控件。
     document.addEventListener('DOMContentLoaded', () => {
         const picker = document.getElementById('themePicker');
         const toggle = document.getElementById('themeToggle');
@@ -76,6 +81,7 @@
         const useMonet = document.getElementById('useMonet');
         let extracting = false;
 
+        // 改变 html 上的 data-theme，让 CSS 和粒子背景跟着更新。
         function applyTheme(theme, save = false) {
             root.dataset.theme = theme;
             options.forEach((option) => {
@@ -124,6 +130,7 @@
             if (returnFocus) toggle.focus();
         }
 
+        // 点击按钮可切换主题，也可用手选、屏幕吸色或壁纸生成配色。
         toggle.addEventListener('click', () => setOpen(panel.hidden));
         options.forEach((option) => option.addEventListener('click', () => {
             applyTheme(option.dataset.themeChoice, true);
