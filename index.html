@@ -2,19 +2,23 @@
 <html lang="zh-CN">
 
 <head>
+    <!-- 页面配置包括字符编码、手机屏幕的显示范围和标签页标题。 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#101426">
     <meta name="description" content="Bohese 的个人起始页，包含搜索、待办和常用入口。">
     <title>StartMenu · Bohese</title>
+    <!-- 先读取已保存的主题，再加载 CSS，让页面按选中的配色显示。 -->
     <script src="theme.js?v=20261116b"></script>
     <link rel="stylesheet" href="style.css?v=particles1">
 </head>
 
 <body>
+    <!-- 粒子背景的画布由 canvasStar.js 绘制。 -->
     <canvas id="canvas" aria-hidden="true"></canvas>
 
     <main class="page-shell">
+        <!-- 搜索区包含标题、快捷键提示和表单，提交动作由 script.js 处理。 -->
         <section class="search-container" aria-labelledby="searchTitle">
             <div class="eyebrow">BOHESE / STARTMENU</div>
             <h1 id="searchTitle">今天，想从哪里开始？</h1>
@@ -38,6 +42,7 @@
             </form>
         </section>
 
+        <!-- 待办区包含日期、展开按钮、添加表单、筛选按钮和任务列表。 -->
         <section class="todo-container" aria-labelledby="appTitle">
             <div class="container">
                 <header class="header">
@@ -82,6 +87,7 @@
                         <button id="clearCompletedBtn" class="clear-btn" type="button" hidden>清空已完成</button>
                     </div>
 
+                    <!-- script.js 会根据当前筛选结果，把任务条目填入这个列表。 -->
                     <ul id="todoList" class="todo-list" aria-live="polite"></ul>
 
                     <div id="emptyState" class="empty-state">
@@ -93,6 +99,7 @@
             </div>
         </section>
 
+        <!-- 常用入口用 a 标签创建，href 指定点击后打开的地址。 -->
         <footer class="footer" aria-label="常用入口">
             <a href="https://www.bilibili.com" target="_blank" rel="noopener noreferrer" class="footer-link bilibili-link">
                 <span class="footer-icon" aria-hidden="true">B</span><span>bilibili</span>
@@ -106,10 +113,15 @@
             <a href="orpheus://daily" class="footer-link netease-link">
                 <span class="footer-icon" aria-hidden="true">音</span><span>网易云</span>
             </a>
+            <a href="https://developer.mozilla.org/zh-CN/docs/Learn_web_development/Core/Structuring_content/Creating_links"
+                target="_blank" rel="noopener noreferrer" class="footer-link mdn-link">
+                <span class="footer-icon" aria-hidden="true">M</span><span>MDN 网页入门</span>
+            </a>
         </footer>
     </main>
 
     <div class="settings-dock">
+    <!-- 主题面板提供预设配色和莫奈取色，由 theme.js 控制。 -->
     <div id="themePicker" hidden>
         <button class="theme-toggle" id="themeToggle" type="button" aria-expanded="false" aria-controls="themePanel">
             <span class="theme-dot" aria-hidden="true"></span>
@@ -151,6 +163,7 @@
         </section>
     </div>
 
+    <!-- 粒子面板提供数量、速度和鼠标吸附设置，由 canvasStar.js 控制。 -->
     <div id="particlePicker" hidden>
         <button class="theme-toggle" id="particleToggle" type="button" aria-expanded="false" aria-controls="particlePanel">
             <svg class="particle-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -182,6 +195,7 @@
     </div>
     </div>
 
+    <!-- 先读完页面结构，再加载搜索、待办和粒子背景的脚本。 -->
     <script src="script.js"></script>
     <script src="canvasStar.js?v=particles3"></script>
 </body>

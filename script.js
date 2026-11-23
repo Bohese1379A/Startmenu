@@ -1,3 +1,4 @@
+// 管理起始页的搜索和待办功能，页面结构在 index.html 中。
 class TodoApp {
     constructor() {
         this.todos = [];
@@ -18,6 +19,7 @@ class TodoApp {
         this.render();
     }
 
+    // 通过 HTML 元素的 id 找到控件，把引用集中放在 this.elements 里。
     cacheElements() {
         this.elements = {
             searchForm: document.getElementById('searchForm'),
@@ -37,6 +39,7 @@ class TodoApp {
         };
     }
 
+    // 给表单提交、按钮点击和键盘快捷键绑定事件处理函数。
     bindEvents() {
         this.elements.searchForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -64,6 +67,7 @@ class TodoApp {
         });
     }
 
+    // 切换 collapsed 类，由 CSS 改变面板的显示状态。
     toggleTodoPanel() {
         const expanded = this.elements.todoContent.classList.toggle('collapsed') === false;
         this.elements.toggleTodoBtn.classList.toggle('collapsed', !expanded);
@@ -71,6 +75,7 @@ class TodoApp {
         this.elements.toggleTodoBtn.querySelector('.toggle-text').textContent = expanded ? '折叠' : '展开';
     }
 
+    // 读取关键词和搜索引擎，拼出搜索网址并尝试在新标签页打开。
     search() {
         const query = this.elements.searchInput.value.trim();
         const engine = this.elements.searchEngine.value;
@@ -95,6 +100,7 @@ class TodoApp {
         }).format(new Date());
     }
 
+    // 创建待办数据，保存到浏览器，再更新页面上的任务列表。
     addTodo() {
         const text = this.elements.todoInput.value.trim();
         if (!text) {
@@ -120,6 +126,7 @@ class TodoApp {
         return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     }
 
+    // 在列表上统一处理按钮点击，用 data-action 判断是切换完成状态还是删除任务。
     handleTodoClick(event) {
         const actionButton = event.target.closest('[data-action]');
         if (!actionButton) return;
@@ -144,6 +151,7 @@ class TodoApp {
         this.showNotification('任务已删除', 'info');
     }
 
+    // 记录当前筛选条件，让列表显示全部、未完成或已完成的任务。
     setFilter(filter) {
         this.currentFilter = filter;
         document.querySelectorAll('.filter-btn').forEach((button) => {
@@ -181,6 +189,7 @@ class TodoApp {
         return new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }).format(date);
     }
 
+    // 把任务数据转换成 DOM 元素，同时更新空列表提示和统计文字。
     render() {
         const filteredTodos = this.getFilteredTodos();
         this.elements.todoList.replaceChildren(...filteredTodos.map((todo) => this.createTodoElement(todo)));
@@ -245,6 +254,7 @@ class TodoApp {
         this.elements.clearCompletedBtn.hidden = completed === 0;
     }
 
+    // 创建临时提示，播放退场动画后从页面中移除。
     showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
@@ -257,6 +267,7 @@ class TodoApp {
         }, 2800);
     }
 
+    // 用 localStorage 保存和读取待办，刷新后可恢复这个浏览器里的任务。
     saveTodos() {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(this.todos));
@@ -288,5 +299,5 @@ class TodoApp {
     }
 }
 
+// 创建实例，开始读取数据、绑定事件并更新页面。
 window.app = new TodoApp();
-

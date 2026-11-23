@@ -1,3 +1,4 @@
+// 在 Canvas 上绘制粒子背景，并管理粒子设置。
 window.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('canvas');
     const ctx = canvas?.getContext('2d');
@@ -17,6 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const random = (min, max) => Math.random() * (max - min) + min;
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
+    // 读取上次的粒子数量、速度和吸附开关，并限制数值范围。
     try {
         const saved = JSON.parse(localStorage.getItem(storageKey));
         if (Number.isInteger(saved?.count)) settings.count = clamp(saved.count, 0, config.maxCount);
@@ -44,6 +46,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 控制设置面板的开合，并让滑块读数和动画状态保持一致。
     function showPanel(open, returnFocus = false) {
         panel.hidden = !open;
         toggle.setAttribute('aria-expanded', String(open));
@@ -88,6 +91,7 @@ window.addEventListener('DOMContentLoaded', () => {
         restartDrawing();
     });
 
+    // 从当前主题的 CSS 变量读取粒子、连线和鼠标附近的颜色。
     function readPalette() {
         const style = getComputedStyle(document.documentElement);
         palette = {
@@ -97,6 +101,7 @@ window.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // 调整粒子数量，新增粒子时为它们随机分配初始位置和速度。
     function updateCount(count) {
         if (points.length > count) points.length = count;
         while (points.length < count) {
@@ -109,6 +114,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 窗口尺寸变化时调整画布和粒子位置，按设置决定粒子数量。
     function resize() {
         const oldWidth = width;
         const oldHeight = height;
@@ -126,6 +132,7 @@ window.addEventListener('DOMContentLoaded', () => {
         restartDrawing();
     }
 
+    // 计算下一帧的粒子位置，并按设置处理鼠标吸附。
     function update(step) {
         points.forEach((point) => {
             point.x += point.vx * settings.speed * step;
@@ -152,6 +159,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 把粒子、相邻粒子的连线以及鼠标效果画到画布上。
     function draw() {
         ctx.clearRect(0, 0, width, height);
         ctx.fillStyle = `rgba(${palette.dot}, 0.72)`;
@@ -204,6 +212,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 用 requestAnimationFrame 逐帧更新，后台页面和减少动态效果时停止循环。
     function loop(timestamp) {
         animationFrame = 0;
         if (document.hidden || motionPreference.matches || points.length === 0) return;
@@ -238,6 +247,7 @@ window.addEventListener('DOMContentLoaded', () => {
         mouse.y = null;
     }
 
+    // 初始化背景，随后监听主题、窗口、鼠标和页面可见状态的变化。
     readPalette();
     resize();
     picker.hidden = false;
